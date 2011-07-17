@@ -2,6 +2,7 @@ require 'faraday_stack'
 require 'hashie/mash'
 
 require "momentapp/version"
+require 'active_support/core_ext'
 
 module Momentapp
   module Config
@@ -18,7 +19,7 @@ module Momentapp
   end
   
   module Connection
-    def self.connection
+    def connection
       @connection ||= begin
         conn = Faraday.new('https://momentapp.com', ssl: {verify: false}) do |b|
           
@@ -49,7 +50,51 @@ module Momentapp
     end
   end
   
-  # module ApiMethods
+  module ApiMethods
+    def create_job(target_uri, method, at, params={}, options={})
+      unless params.nil?
+        target_uri += "?" + params.to_query
+      end
+      
+      job_payload = {:method => method.upcase, :at => at, :uri => target_uri}
+
+      unless options.nil?
+        valid_option_keys = [:limit, :callback_uri]
+        options.slice(*valid_option_keys)
+        job_payload.merge!({:limit => options[:limit]}) if options[:limit].present?
+        job_payload.merge!({:callback_uri => options[:callback_uri]}) if options[:callback_uri].present?
+      end
+      
+      payload = {:job => job_payload}.merge!(:apikey => Momentapp::Config.api_key)
+      response = connection.post '/jobs.json', payload
+      JSON.load(response.body)
+    end
+    
+    def update_job(job_id, target_uri, method, at, params={}, options={})
+      unless params.nil?
+        target_uri += "?" + params.to_query
+      end
+      
+      job_payload = {:method => method.upcase, :at => at, :uri => target_uri}
+
+      unless options.nil?
+        valid_option_keys = [:limit, :callback_uri]
+        options.slice(*valid_option_keys)
+        job_payload.merge!({:limit => options[:limit]}) if options[:limit].present?
+        job_payload.merge!({:callback_uri => options[:callback_uri]}) if options[:callback_uri].present?
+      end
+      
+      payload = {:job => job_payload}.merge!(:apikey => Momentapp::Config.api_key)
+      response = connection.put "/jobs/#{job_id}.json", payload
+      JSON.load(response.body)      
+    end
+    
+    def delete_job(job_id)
+      response = connection.delete "/jobs/#{job_id}.json?apikey=#{Momentapp::Config.api_key}"
+      JSON.load(response.body)
+    end
+  end
+  
   #   def get(path, params = nil)
   #     raw = params && params.delete(:raw)
   #     response = super
@@ -87,5 +132,5 @@ module Momentapp
   # 
   extend Config
   extend Connection
-  # extend ApiMethods
+  extend ApiMethods
 end

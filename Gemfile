@@ -5,6 +5,7 @@ gem 'faraday-stack'
 # gem 'faraday_middleware'
 gem 'hashie'
 gem 'activesupport'
+gem 'i18n'
 
 group :development do
   gem 'webmock'
