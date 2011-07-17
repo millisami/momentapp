@@ -4,6 +4,7 @@ gem 'faraday'
 gem 'faraday-stack'
 # gem 'faraday_middleware'
 gem 'hashie'
+gem 'activesupport'
 
 group :development do
   gem 'webmock'

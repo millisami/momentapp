@@ -13,14 +13,21 @@ module Momentapp
       end
     end
     
-    URL = 'http://momentapp.com/'
+    URL = 'https://momentapp.com'
     API_VERSION = '1.0'
   end
   
   module Connection
     def self.connection
       @connection ||= begin
-        conn = Faraday.new('http://momentapp.com/') do |b|
+        conn = Faraday.new('https://momentapp.com', ssl: {verify: false}) do |b|
+          
+          b.request  :json
+          # b.response :logger
+          # b.adapter  :web_mock
+          
+          # b.use Faraday::Request::UrlEncoded
+          # b.use Faraday::Response::Logger
           # b.use Faraday::Response::Mashify
           # b.use Faraday::Response::ParseJson
           # b.use FaradayStack::ResponseJSON, content_type: 'application/json'
@@ -31,6 +38,9 @@ module Momentapp
         conn
       end
     end
+    
+    
+    # resp = conn.post '/jobs.json', {:apikey => "4wV4xjaYbpWRLY_sHYYc", :job => {:method => "PUT", :at => '2012-01-31T18:36:21', :uri => "http://kasko.com"}}
     
     def get(path, params = nil)
       connection.get(path) do |request|
