@@ -8,11 +8,11 @@ describe Momentapp do
         target_uri = "http://kasko.com"
         method = "GET"
         at = '2012-01-31T18:36:21'
-        result = Momentapp.create_job(target_uri, method, at)
+        job = Momentapp.create_job(target_uri, method, at)
       
-        result['success']['job']['uri'].should eql("http://kasko.com:80/")
-        result['success']['job']['method'].should eql('GET')
-        result['success']['job']['at'].should eql('2012-02-01 08:21:21 +0545')
+        job.uri.should eql("http://kasko.com:80/")
+        job.http_method.should eql('GET')
+        job.at.should eql('2012-02-01 08:21:21 +0545')
       end
     end
     
@@ -23,11 +23,11 @@ describe Momentapp do
         method = "GET"
         at = '2012-01-31T18:36:21'
         params = {:var1 => true, :var2 => false, :var3 => "ok"}
-        result = Momentapp.create_job(target_uri, method, at, params)
+        job = Momentapp.create_job(target_uri, method, at, params)
       
-        result['success']['job']['uri'].should eql("http://kasko.com:80/?var1=true&var2=false&var3=ok")
-        result['success']['job']['method'].should eql('GET')
-        result['success']['job']['at'].should eql('2012-02-01 08:21:21 +0545')
+        job.uri.should eql("http://kasko.com:80/?var1=true&var2=false&var3=ok")
+        job.http_method.should eql('GET')
+        job.at.should eql('2012-02-01 08:21:21 +0545')
       end
     end
     
@@ -35,14 +35,14 @@ describe Momentapp do
       # WebMock.allow_net_connect!
       VCR.use_cassette "new_job_with_params_n_options", :record => :new_episodes do
         target_uri = "http://kasko.com"
-        method = "GET"
+        http_method = "GET"
         at = '2012-01-31T18:36:21'
         params = {:var1 => true, :var2 => false, :var3 => "ok"}
         options = {:limit => 3, :callback_uri => "http://callback.com/public/listener"}
-        result = Momentapp.create_job(target_uri, method, at, params, options)
-        result['success']['job']['uri'].should eql("http://kasko.com:80/?var1=true&var2=false&var3=ok")
-        result['success']['job']['method'].should eql('GET')
-        result['success']['job']['at'].should eql('2012-02-01 08:21:21 +0545')
+        job = Momentapp.create_job(target_uri, http_method, at, params, options)
+        job.uri.should eql("http://kasko.com:80/?var1=true&var2=false&var3=ok")
+        job.http_method.should eql('GET')
+        job.at.should eql('2012-02-01 08:21:21 +0545')
       end
     end
   end
@@ -54,17 +54,17 @@ describe Momentapp do
       method = "GET"
       at = '2012-01-31T18:36:21'
       params = {:var1 => true, :var2 => false, :var3 => "ok"}
-      result = Momentapp.create_job(target_uri, method, at, params)      
+      job = Momentapp.create_job(target_uri, method, at, params)      
       
-      job_id = result['success']['job']['id']
+      job_id = job.id
       target_uri = "http://tesko.com"
       method = "POST"
       options = {}
-      result_update = Momentapp.update_job(job_id, target_uri, method, at, params, options)
+      job_update = Momentapp.update_job(job_id, target_uri, method, at, params, options)
 
-      result_update['success']['job']['uri'].should eql("http://tesko.com:80/")
-      result_update['success']['job']['method'].should eql('POST')
-      result_update['success']['job']['at'].should eql('2013-02-01 08:21:21 +0545')
+      job_update.uri.should eql("http://tesko.com:80/")
+      job_update.http_method.should eql('POST')
+      job_update.at.should eql('2013-02-01 08:21:21 +0545')
     end
   end
   
@@ -74,12 +74,12 @@ describe Momentapp do
       target_uri = "http://kasko.com"
       method = "GET"
       at = '2012-01-31T18:36:21'
-      result = Momentapp.create_job(target_uri, method, at)
+      job = Momentapp.create_job(target_uri, method, at)
       
-      job_id = result['success']['job']['id']
+      job_id = job.id
 
       new_result = Momentapp.delete_job(job_id)
-      new_result['success']['message'].should eql('Job deleted')
+      new_result.message.should eql('Job deleted')
     end
   end
 end
