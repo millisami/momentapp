@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Momentapp::VERSION
   s.authors     = ["millisami"]
   s.email       = ["millisami@gmail.com"]
-  s.homepage    = "http://momentapp.github.com"
+  s.homepage    = "http://millisami.github.com/momentapp"
   s.summary     = %q{Moment is a ruby wrapper for the Momentapp.com service.}
   s.description = %q{Moment is a ruby wrapper for the Momentapp.com service. Interaction with the Momentapp API made easy.}
 
